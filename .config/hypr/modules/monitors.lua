@@ -1,3 +1,11 @@
+-- Fallback: any monitor not matched below gets its preferred mode
+hl.monitor({
+    output   = "",
+    mode     = "preferred",
+    position = "auto",
+    scale    = 1,
+})
+
 hl.monitor({
     output   = "DP-2",
     mode     = "2560x1440@240",

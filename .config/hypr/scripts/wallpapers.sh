@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DIR="$HOME/wallpapers"
+DIR="${WALLPAPER_DIR:-$HOME/wallpapers}"
 INTERVAL=3600
 
 if ! awww query >/dev/null 2>&1; then
@@ -11,11 +11,15 @@ if ! awww query >/dev/null 2>&1; then
 fi
 
 while true; do
+    mapfile -t outputs < <(awww query | awk -F': ' '{ print ($1 == "" ? $2 : $1) }')
     mapfile -t walls < <(find "$DIR" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.webp' \) | shuf)
-    if [ "${#walls[@]}" -eq 0 ]; then
+    if [ "${#walls[@]}" -eq 0 ] || [ "${#outputs[@]}" -eq 0 ]; then
         exit 1
     fi
-    awww img "${walls[0]}" -o DP-2 --resize crop --transition-type grow --transition-pos center --transition-fps 240 --transition-duration 1.5
-    awww img "${walls[1]:-${walls[0]}}" -o HDMI-A-1 --resize crop --transition-type grow --transition-pos center --transition-fps 144 --transition-duration 1.5
+    i=0
+    for output in "${outputs[@]}"; do
+        awww img "${walls[i % ${#walls[@]}]}" -o "$output" --resize crop --transition-type grow --transition-pos center --transition-fps 144 --transition-duration 1.5
+        i=$((i + 1))
+    done
     sleep "$INTERVAL"
 done
