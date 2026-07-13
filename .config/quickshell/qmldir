@@ -1,0 +1,8 @@
+singleton Theme 1.0 Theme.qml
+Bar 1.0 Bar.qml
+Workspaces 1.0 Workspaces.qml
+ActiveWindow 1.0 ActiveWindow.qml
+ClockWidget 1.0 ClockWidget.qml
+VolumeWidget 1.0 VolumeWidget.qml
+NotifButton 1.0 NotifButton.qml
+TrayWidget 1.0 TrayWidget.qml
