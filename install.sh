@@ -192,4 +192,7 @@ apply_gtk_settings
 setup_sddm
 fetch_wallpapers
 chsh -s "$(command -v fish)"
-info "done"
+clear
+echo "Rebooting in 4 seconds"
+sleep 4
+reboot
