@@ -150,6 +150,5 @@ link_configs
 build_weather
 apply_gtk_settings
 fetch_wallpapers
-chsh /usr/bin/fish
-
+chsh -s "$(command -v fish)"
 info "done"
