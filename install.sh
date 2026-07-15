@@ -18,11 +18,14 @@ die()  { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
 
 ARCH_PACKAGES=(
     hyprland xdg-desktop-portal-hyprland hyprpolkitagent
+    hyprlock hypridle
     quickshell swaync fuzzel kitty dolphin hyprshot awww
     pavucontrol git
     ttf-jetbrains-mono ttf-jetbrains-mono-nerd
     noto-fonts noto-fonts-cjk noto-fonts-emoji
     catppuccin-gtk-theme-mocha
+    # weather app build deps
+    gcc make pkgconf gtk4 libsoup3 json-glib
 )
 
 GTK_THEME_NAME="catppuccin-mocha-mauve-standard+default"
@@ -101,6 +104,17 @@ link_configs() {
     chmod +x "$REPO_DIR"/.config/hypr/scripts/*.sh
 }
 
+# ----------------------------------------------------------------- weather ---
+
+build_weather() {
+    info "building weather app"
+    if ! make -C "$REPO_DIR/src/weather" install PREFIX="$HOME/.local"; then
+        warn "weather build failed, skipping (rerun after installing gtk4 libsoup3 json-glib)"
+        return
+    fi
+    info "installed weather -> $HOME/.local/bin/weather"
+}
+
 # --------------------------------------------------------------- gtk theme ---
 
 apply_gtk_settings() {
@@ -133,6 +147,7 @@ fetch_wallpapers() {
 [ "$SKIP_PACKAGES" -eq 1 ] || install_packages
 command -v git >/dev/null || die "git is required"
 link_configs
+build_weather
 apply_gtk_settings
 fetch_wallpapers
 

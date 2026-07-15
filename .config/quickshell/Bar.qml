@@ -53,6 +53,7 @@ Variants {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 12
 
+                WeatherWidget {}
                 VolumeWidget {}
                 NotifButton {}
                 TrayWidget { bar: bar }

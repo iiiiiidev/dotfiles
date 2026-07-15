@@ -25,6 +25,12 @@ hl.window_rule({
     float = true,
 })
 
+hl.window_rule({
+    name  = "float-weather",
+    match = { class = "wttr%.in" },
+    float = true,
+})
+
 hl.layer_rule({
     name  = "blur-fuzzel",
     match = { namespace = "^launcher$" },

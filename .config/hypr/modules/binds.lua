@@ -15,6 +15,8 @@ hl.bind(mainMod .. " + M", hl.dsp.exit())
 
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
 
+hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))
+
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("hyprshot -m region"))
 
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))

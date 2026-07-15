@@ -1,4 +1,6 @@
 singleton Theme 1.0 Theme.qml
+singleton Weather 1.0 Weather.qml
+WeatherWidget 1.0 WeatherWidget.qml
 Bar 1.0 Bar.qml
 Workspaces 1.0 Workspaces.qml
 ActiveWindow 1.0 ActiveWindow.qml
