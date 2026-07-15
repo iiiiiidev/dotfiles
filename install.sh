@@ -78,16 +78,16 @@ install_packages() {
 
 # ----------------------------------------------------------------- configs ---
 
-link_configs() {
+install_configs() {
     mkdir -p "$CONFIG_DIR"
     local src name target backup
-    for src in "$REPO_DIR"/.config/*/; do
-        src="${src%/}"
+    for src in "$REPO_DIR"/.config/*; do
         name="$(basename "$src")"
         target="$CONFIG_DIR/$name"
 
+        # already symlinked to the repo (my own setup), leave it alone
         if [ "$(readlink -f "$target" 2>/dev/null)" = "$src" ]; then
-            info "$name already linked"
+            info "$name is symlinked to the repo, skipping"
             continue
         fi
 
@@ -97,11 +97,11 @@ link_configs() {
             mv "$target" "$backup"
         fi
 
-        ln -s "$src" "$target"
-        info "linked $name -> $target"
+        cp -r "$src" "$target"
+        info "copied $name -> $target"
     done
 
-    chmod +x "$REPO_DIR"/.config/hypr/scripts/*.sh
+    chmod +x "$CONFIG_DIR"/hypr/scripts/*.sh
 }
 
 # ----------------------------------------------------------------- weather ---
@@ -146,7 +146,7 @@ fetch_wallpapers() {
 
 [ "$SKIP_PACKAGES" -eq 1 ] || install_packages
 command -v git >/dev/null || die "git is required"
-link_configs
+install_configs
 build_weather
 apply_gtk_settings
 fetch_wallpapers
