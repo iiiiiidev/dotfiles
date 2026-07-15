@@ -17,10 +17,12 @@ warn() { printf '\033[1;33m!!\033[0m %s\n' "$*"; }
 die()  { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
 
 ARCH_PACKAGES=(
-    hyprland xdg-desktop-portal-hyprland hyprpolkitagent
+    hyprland xdg-desktop-portal-hyprland hyprpolkitagent sddm
     hyprlock hypridle
     quickshell swaync fuzzel kitty dolphin hyprshot awww fish starship
     pavucontrol git
+    qt6-svg qt6-declarative qt5-quickcontrols2 # sddm
+    kwin layer-shell-qt layer-shell-qt5 # sddm wayland greeter (layer-shell-qt5 is aur)
     ttf-jetbrains-mono ttf-jetbrains-mono-nerd
     noto-fonts noto-fonts-cjk noto-fonts-emoji
     catppuccin-gtk-theme-mocha
@@ -30,6 +32,9 @@ ARCH_PACKAGES=(
 
 GTK_THEME_NAME="catppuccin-mocha-mauve-standard+default"
 GTK_FONT="JetBrains Mono 12"
+
+SDDM_THEME_NAME="catppuccin-mocha-mauve"
+SDDM_THEME_URL="https://github.com/catppuccin/sddm/releases/download/v1.1.2/catppuccin-mocha-mauve-sddm.zip"
 
 install_arch() {
     local missing=() aur=() pkg
@@ -128,6 +133,41 @@ apply_gtk_settings() {
     gsettings set org.gnome.desktop.interface color-scheme "prefer-dark" || warn "failed to set color-scheme"
 }
 
+# -------------------------------------------------------------------- sddm ---
+
+setup_sddm() {
+    if [ -d "/usr/share/sddm/themes/$SDDM_THEME_NAME" ]; then
+        info "sddm theme $SDDM_THEME_NAME already installed"
+    else
+        info "installing sddm theme $SDDM_THEME_NAME"
+        local tmp
+        tmp="$(mktemp -d)"
+        curl -fsSL -o "$tmp/theme.zip" "$SDDM_THEME_URL"
+        bsdtar -xf "$tmp/theme.zip" -C "$tmp"
+        sudo mkdir -p /usr/share/sddm/themes
+        sudo mv "$tmp/$SDDM_THEME_NAME" /usr/share/sddm/themes/
+        rm -rf "$tmp"
+    fi
+
+    info "writing sddm config"
+    sudo mkdir -p /etc/sddm.conf.d
+    sudo tee /etc/sddm.conf.d/theme.conf >/dev/null <<EOF # from https://wiki.archlinux.org/title/SDDM#Wayland 2.12.1
+[Theme]
+Current=$SDDM_THEME_NAME
+EOF
+    sudo tee /etc/sddm.conf.d/10-wayland.conf >/dev/null <<'EOF'
+[General]
+DisplayServer=wayland
+GreeterEnvironment=QT_WAYLAND_SHELL_INTEGRATION=layer-shell
+
+[Wayland]
+CompositorCommand=kwin_wayland --drm --no-lockscreen --no-global-shortcuts --locale1
+EOF
+
+    info "enabling sddm"
+    sudo systemctl enable sddm.service
+}
+
 # -------------------------------------------------------------- wallpapers ---
 
 fetch_wallpapers() {
@@ -149,6 +189,7 @@ command -v git >/dev/null || die "git is required"
 install_configs
 build_weather
 apply_gtk_settings
+setup_sddm
 fetch_wallpapers
 chsh -s "$(command -v fish)"
 info "done"
