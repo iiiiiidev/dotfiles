@@ -19,7 +19,7 @@ die()  { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
 ARCH_PACKAGES=(
     hyprland xdg-desktop-portal-hyprland hyprpolkitagent
     hyprlock hypridle
-    quickshell swaync fuzzel kitty dolphin hyprshot awww fish
+    quickshell swaync fuzzel kitty dolphin hyprshot awww fish starship
     pavucontrol git
     ttf-jetbrains-mono ttf-jetbrains-mono-nerd
     noto-fonts noto-fonts-cjk noto-fonts-emoji
